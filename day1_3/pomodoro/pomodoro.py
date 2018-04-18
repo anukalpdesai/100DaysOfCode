@@ -58,15 +58,15 @@ def main():
 
     parser.add_argument('-wt', '--work-time',
                         help='work time, default is 25 minutes',
-                        default=1,
+                        default=25,
                         type=int)
     parser.add_argument('-sb', '--short-break',
                         help='short break time, default is 5 minutes',
-                        default=1,
+                        default=5,
                         type=int)
     parser.add_argument('-lg', '--long-break',
                         help='long break time, default is 10 minutes',
-                        default=1,
+                        default=10,
                         type=int)
     args = parser.parse_args()
 
