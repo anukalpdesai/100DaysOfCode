@@ -1,7 +1,7 @@
 import argparse
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Pomodoro:
@@ -10,7 +10,6 @@ class Pomodoro:
         self.work_time = work_time
         self.short_break = short_break
         self.long_break = long_break
-        self.max_pomodoro = 1
 
     def start_pomodoro(self):
 
@@ -21,25 +20,37 @@ class Pomodoro:
             time.sleep(1)
 
         pomodoro_count = 0
-        while pomodoro_count < self.max_pomodoro:
+        while True:
+
             print()
             print('Pomodoro started: {}'.format(datetime.strftime(datetime.now(), '%B, %d %Y-%m-%d %H:%M:%S')))
 
-            for i in range(1500, 0, -1):
-                sys.stdout.write('\r\t\t')
-                sys.stdout.write('{:4d}'.format(i))
+            td = timedelta(minutes=self.work_time)
+            while td > timedelta(seconds=-1):
+                sys.stdout.write('\r\t\t{}'.format(td))
                 sys.stdout.flush()
+                td -= timedelta(seconds=1)
                 time.sleep(1)
 
-            print('Short break: {}'.format(datetime.strftime(datetime.now(), '%B, %d %Y-%m-%d %H:%M:%S')))
+            if pomodoro_count == 3:
+                pomodoro_count = 0
+                print('\nLong break: {}'.format(datetime.strftime(datetime.now(), '%B, %d %Y-%m-%d %H:%M:%S')))
+                td = timedelta(minutes=self.long_break)
+                while td > timedelta(seconds=-1):
+                    sys.stdout.write('\r\t\t{}'.format(td))
+                    sys.stdout.flush()
+                    td -= timedelta(seconds=1)
+                    time.sleep(1)
+            else:
+                print('\nShort break: {}'.format(datetime.strftime(datetime.now(), '%B, %d %Y-%m-%d %H:%M:%S')))
+                td = timedelta(minutes=self.short_break)
+                while td > timedelta(seconds=-1):
+                    sys.stdout.write('\r\t\t{}'.format(td))
+                    sys.stdout.flush()
+                    td -= timedelta(seconds=1)
+                    time.sleep(1)
 
-            for i in range(600, 0, -1):
-                sys.stdout.write('\r\t\t')
-                sys.stdout.write('{:3d}'.format(i))
-                sys.stdout.flush()
-                time.sleep(1)
-
-            pomodoro_count += 1
+                pomodoro_count += 1
 
 
 def main():
@@ -47,15 +58,15 @@ def main():
 
     parser.add_argument('-wt', '--work-time',
                         help='work time, default is 25 minutes',
-                        default=25,
+                        default=1,
                         type=int)
     parser.add_argument('-sb', '--short-break',
                         help='short break time, default is 5 minutes',
-                        default=5,
+                        default=1,
                         type=int)
     parser.add_argument('-lg', '--long-break',
                         help='long break time, default is 10 minutes',
-                        default=10,
+                        default=1,
                         type=int)
     args = parser.parse_args()
 
