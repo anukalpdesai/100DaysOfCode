@@ -1,5 +1,5 @@
 import csv
-from collections import defaultdict, namedtuple
+from collections import defaultdict, namedtuple, Counter
 
 MOVIE_DATA = 'movie_metadata.csv'
 NUM_TOP_DIRECTORS = 20
@@ -35,7 +35,7 @@ def get_average_scores(directors):
     temp = defaultdict(list)
     for director_name, Movie in directors.items():
         Movie.sort(key=lambda Movie: Movie.score, reverse=True)
-        if len([movie for movie in Movie if movie.year >= 1960]) >= 4:
+        if len([movie for movie in Movie if movie.year >= MIN_YEAR]) >= MIN_MOVIES:
             temp[(director_name, _calc_mean(Movie))] = Movie
             #temp[director_name].append(_calc_mean(Movie))
     return temp
@@ -50,9 +50,22 @@ def print_results(directors):
     '''Print directors ordered by highest average rating. For each director
     print his/her movies also ordered by highest rated movie.
     See http://pybit.es/codechallenge13.html for example output'''
+
     fmt_director_entry = '{counter}. {director:<52} {avg}'
     fmt_movie_entry = '{year}] {title:<50} {score}'
     sep_line = '-' * 60
+    for counter, key in enumerate(
+            sorted(directors.keys(),
+                   key=lambda x: x[1], reverse=True), start=1):
+        director = key[0]
+        avg = key[1]
+        print('{:02}. {:<52} {}'.format(counter, director, avg))
+        print('-' * 60)
+        for movie in directors[(director, avg)]:
+            print('{}] {:50} {}'.format(movie.year, movie.title, movie.score))
+        print()
+
+
 
 
 def main():
